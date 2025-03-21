@@ -15,16 +15,16 @@
 - Ollama本地大模型
 
 ## 安装运行
+1. 确保你当前有Golang环境
+2. 克隆项目到本地
+3. 安装Ollama环境，直接到[Ollama](https://ollama.com/)官网下载对应平台的安装包
+4. 安装DeepSeek模型，目前现在只支持7b版本，后续会搞成可配置的
+5. 运行项目
 ```bash
 # 安装依赖
-go mod tidy
-
-# 启动服务
-go run main.go
-
-# 确保Ollama服务运行在默认端口（11434）
-ollama serve
+sh start.sh
 ```
+6. 访问URL_ADDRESS:8080/web 查看效果
 
 ## API接口示例
 

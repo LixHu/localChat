@@ -1,4 +1,5 @@
 #!/bin/bash
+go mod tidy
 
 cd chat-front
 pnpm install
