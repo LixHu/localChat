@@ -26,29 +26,11 @@ sh start.sh
 ```
 6. 访问URL_ADDRESS:8080/web 查看效果
 
-## API接口示例
 
-### 流式聊天
-```curl
-POST /api/chat
-{
-  "message": "你好",
-  "role": "通用助手"
-}
-```
+## 计划
+- 上传文件分析
+- 模型改为可配置
 
-### 角色管理
-```curl
-# 获取所有角色
-GET /api/roles
-
-# 创建新角色
-POST /api/roles
-{
-  "name": "翻译助手",
-  "template": "你擅长中英互译，保持专业术语准确性"
-}
-```
-
-## 角色配置
-角色模板存储在`/api/controller/role.go`中，支持通过API动态添加新的对话角色模板。
+看看能不能实现的功能：
+- 联网搜索
+- 调用本地API
