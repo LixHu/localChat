@@ -23,5 +23,8 @@ func main() {
 	// 注册路由
 	api.SetupRoutes(r)
 
+	// 添加静态文件路由
+	r.Static("/web", "./dist")
+
 	r.Run(":8080")
 }
