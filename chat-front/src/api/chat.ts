@@ -6,6 +6,7 @@ export interface ChatMessage {
 export interface ChatRequest {
   role: string;
   message: string;
+  model: string;
 }
 
 // 发送聊天消息

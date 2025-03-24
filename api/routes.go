@@ -9,6 +9,7 @@ import (
 func SetupRoutes(r *gin.Engine) {
 	// 聊天接口
 	r.POST("/api/chat", controller.ChatStream)
+	r.GET("/api/models", controller.ListModels)
 
 	// 角色管理接口
 	r.GET("/api/roles", controller.ListRoles)

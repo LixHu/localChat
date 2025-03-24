@@ -3,6 +3,8 @@ import ReactMarkdown from 'react-markdown';
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
 import { Role, getRoles, createRole } from './api/roles';
 import { ChatMessage, sendMessage } from './api/chat';
+import { Model, getModels } from './api/models';
+import ModelSelect from './components/ModelSelect';
 
 interface Message extends ChatMessage { }
 
@@ -15,11 +17,24 @@ function App() {
   const [isCreating, setIsCreating] = useState(false);
   const [newRole, setNewRole] = useState({ name: '', description: '' });
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [models, setModels] = useState<Model[]>([]);
+  const [selectedModel, setSelectedModel] = useState<Model | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchRoles();
+    fetchModels();
   }, []);
+
+  const fetchModels = async () => {
+    try {
+      const response = await getModels();
+      console.log(response.data.models)
+      setModels(response.data.models);
+    } catch (error) {
+      console.error('Error fetching models:', error);
+    }
+  };
 
   useEffect(() => {
     scrollToBottom();
@@ -42,7 +57,7 @@ function App() {
 
   const handleCreateRole = async () => {
     if (!newRole.name.trim() || !newRole.description.trim()) return;
-    
+
     try {
       setIsCreating(true);
       await createRole(newRole);
@@ -55,8 +70,27 @@ function App() {
     }
   };
 
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
   const handleSend = async () => {
-    if (!input.trim() || !selectedRole || isStreaming) return;
+    if (!input.trim()) return;
+
+    if (!selectedRole) {
+      setToastMessage('请先选择一个角色');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      return;
+    }
+
+    if (!selectedModel) {
+      setToastMessage('请先选择一个模型');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      return;
+    }
+
+    if (isStreaming) return;
 
     const parseSSE = (line: string) => {
       let event = 'message';
@@ -81,9 +115,9 @@ function App() {
     try {
       const response = await sendMessage({
         role: selectedRole.id,
+        model: selectedModel.name,
         message: input
       });
-      console.log("response 格式", typeof response, "\n", response)
 
       const reader = response.getReader();
 
@@ -132,7 +166,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100">
+    <div className="min-h-screen bg-gray-900 text-gray-100 relative">
       <div className="container mx-auto px-4 py-8 h-screen flex gap-4">
         {/* Roles sidebar */}
         <div className="w-64 shrink-0 space-y-4 overflow-y-auto">
@@ -198,6 +232,16 @@ function App() {
 
         {/* Chat section */}
         <div className="flex-1 flex flex-col bg-gray-800 rounded-lg overflow-hidden h-full">
+          <div className="flex justify-end p-4 border-b border-gray-700">
+            <div className="w-48">
+              <ModelSelect
+                selectedModel={selectedModel}
+                onModelSelect={setSelectedModel}
+                models={models}
+                disabled={isStreaming}
+              />
+            </div>
+          </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message, index) => (
               <div
@@ -228,7 +272,6 @@ function App() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder={selectedRole ? '输入消息...' : '请先选择一个角色'}
-                disabled={!selectedRole || isStreaming}
                 className="flex-1 bg-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -242,8 +285,17 @@ function App() {
           </div>
         </div>
       </div>
+      {showToast && (
+        <div className="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity">
+
+          <div className="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity">
+            {toastMessage}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default App
+
