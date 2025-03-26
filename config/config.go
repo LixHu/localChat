@@ -13,7 +13,7 @@ var GlobalConfig Config
 func init() {
 	// 默认配置
 	GlobalConfig = Config{
-		OllamaURL: "http://0.0.0.0:11434",
+		OllamaURL: "http://ollama:11434",
 	}
 
 	// 从环境变量加载配置

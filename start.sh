@@ -1,14 +1,11 @@
-#!/bin/bash
-go mod tidy
+#!/bin/sh
+echo "starting ollama"
+ollama serve &
 
-cd chat-front
-pnpm install
-pnpm build
+sleep 3
 
-sleep 2
-#移动并覆盖dist目录下的所有内容到上层dist目录中
-cp -r dist/* ../dist/
+ollama pull deepseek-r1
 
-cd ../
+ollama run deepseek-r1
 
-go run main.go 
+wait

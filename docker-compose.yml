@@ -1,0 +1,24 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./start.sh:/start.sh
+    ports:
+      - "11434:11434"
+    entrypoint: ["/bin/sh", "/start.sh"]
+      
+  app:
+    build: .
+    container_name: chat-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dist:/app/dist
+      - ./data:/app/data
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_data:
