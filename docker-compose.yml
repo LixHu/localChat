@@ -2,6 +2,11 @@ services:
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
     volumes:
       - ollama_data:/root/.ollama
       - ./start.sh:/start.sh
