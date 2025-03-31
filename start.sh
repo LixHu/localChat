@@ -6,6 +6,6 @@ sleep 3
 
 ollama pull deepseek-r1
 
-ollama run deepseek-r1
+ollama run deepseek-r1:1.5b
 
 wait
